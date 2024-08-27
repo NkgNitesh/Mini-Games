@@ -120,4 +120,151 @@ function checkWordSearch() {
         feedback.textContent = 'Incorrect, please try again!';
     }
 }
+function startRockPaperScissors() {
+    document.getElementById('game-area').innerHTML = `
+        <h2>Rock, Paper, Scissors</h2>
+        <p>Choose your move:</p>
+        <button onclick="playRPS('rock')">Rock</button>
+        <button onclick="playRPS('paper')">Paper</button>
+        <button onclick="playRPS('scissors')">Scissors</button>
+        <p id="rps-feedback"></p>
+    `;
+    document.getElementById('game-area').style.display = 'block';
+}
+
+function playRPS(userChoice) {
+    const choices = ['rock', 'paper', 'scissors'];
+    const computerChoice = choices[Math.floor(Math.random() * choices.length)];
+    let result;
+
+    if (userChoice === computerChoice) {
+        result = 'It\'s a tie!';
+    } else if (
+        (userChoice === 'rock' && computerChoice === 'scissors') ||
+        (userChoice === 'paper' && computerChoice === 'rock') ||
+        (userChoice === 'scissors' && computerChoice === 'paper')
+    ) {
+        result = 'You win!';
+    } else {
+        result = 'You lose!';
+    }
+
+    document.getElementById('rps-feedback').textContent = `Computer chose ${computerChoice}. ${result}`;
+}
+function startTicTacToe() {
+    document.getElementById('game-area').innerHTML = `
+        <h2>Tic-Tac-Toe</h2>
+        <table id="tic-tac-toe-board">
+            <tr>
+                <td onclick="makeMove(0, 0)"></td>
+                <td onclick="makeMove(0, 1)"></td>
+                <td onclick="makeMove(0, 2)"></td>
+            </tr>
+            <tr>
+                <td onclick="makeMove(1, 0)"></td>
+                <td onclick="makeMove(1, 1)"></td>
+                <td onclick="makeMove(1, 2)"></td>
+            </tr>
+            <tr>
+                <td onclick="makeMove(2, 0)"></td>
+                <td onclick="makeMove(2, 1)"></td>
+                <td onclick="makeMove(2, 2)"></td>
+            </tr>
+        </table>
+        <p id="tic-tac-toe-feedback"></p>
+    `;
+    document.getElementById('game-area').style.display = 'block';
+}
+
+let currentPlayer = 'X';
+const board = [
+    ['', '', ''],
+    ['', '', ''],
+    ['', '', '']
+];
+
+function makeMove(row, col) {
+    if (board[row][col] === '') {
+        board[row][col] = currentPlayer;
+        document.getElementById('tic-tac-toe-board').rows[row].cells[col].textContent = currentPlayer;
+        if (checkWinner()) {
+            document.getElementById('tic-tac-toe-feedback').textContent = `${currentPlayer} wins!`;
+            return;
+        }
+        currentPlayer = (currentPlayer === 'X') ? 'O' : 'X';
+    }
+}
+
+function checkWinner() {
+    const winPatterns = [
+        // Rows
+        [[0, 0], [0, 1], [0, 2]],
+        [[1, 0], [1, 1], [1, 2]],
+        [[2, 0], [2, 1], [2, 2]],
+        // Columns
+        [[0, 0], [1, 0], [2, 0]],
+        [[0, 1], [1, 1], [2, 1]],
+        [[0, 2], [1, 2], [2, 2]],
+        // Diagonals
+        [[0, 0], [1, 1], [2, 2]],
+        [[0, 2], [1, 1], [2, 0]]
+    ];
+
+    for (let pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        if (board[a[0]][a[1]] !== '' &&
+            board[a[0]][a[1]] === board[b[0]][b[1]] &&
+            board[a[0]][a[1]] === board[c[0]][c[1]]) {
+            return true;
+        }
+    }
+    return false;
+}
+function startMemoryGame() {
+    const cards = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D'];
+    cards.sort(() => 0.5 - Math.random()); // Shuffle cards
+
+    let cardHTML = cards.map((card, index) => `
+        <div class="card" onclick="flipCard(${index})" data-card="${card}">
+            ?
+        </div>
+    `).join('');
+
+    document.getElementById('game-area').innerHTML = `
+        <h2>Memory Game</h2>
+        <div class="memory-board">${cardHTML}</div>
+        <p id="memory-feedback"></p>
+    `;
+    document.getElementById('game-area').style.display = 'block';
+}
+
+let firstCard = null;
+let secondCard = null;
+const cardElements = [];
+
+function flipCard(index) {
+    const cardElement = document.querySelectorAll('.card')[index];
+    const cardValue = cardElement.getAttribute('data-card');
+
+    if (firstCard === null) {
+        firstCard = { element: cardElement, value: cardValue };
+        cardElement.textContent = cardValue;
+    } else if (secondCard === null) {
+        secondCard = { element: cardElement, value: cardValue };
+        cardElement.textContent = cardValue;
+
+        if (firstCard.value === secondCard.value) {
+            firstCard = null;
+            secondCard = null;
+        } else {
+            setTimeout(() => {
+                firstCard.element.textContent = '?';
+                secondCard.element.textContent = '?';
+                firstCard = null;
+                secondCard = null;
+            }, 1000);
+        }
+    }
+}
+
 
